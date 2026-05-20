@@ -1,11 +1,27 @@
-# README.md — O Resgate da Princesa Layla
-
-````md
 # 🏰 O Resgate da Princesa Layla
 
-Um jogo RPG em ASCII desenvolvido em Python utilizando a biblioteca Pygame.
+Um jogo RPG retrô em ASCII desenvolvido em Python utilizando a biblioteca Pygame.
 
-O jogador escolhe uma classe, enfrenta inimigos em batalhas por turnos e derrota o necromante Malzor para salvar o reino.
+O projeto combina:
+- batalhas por turnos
+- animações em ASCII
+- efeitos CRT
+- introdução cinematográfica estilo Star Wars
+- música medieval
+- interface retrô inspirada em jogos clássicos
+
+---
+
+# 🎮 Gameplay
+
+O jogador escolhe uma classe e enfrenta inimigos até chegar ao chefe final: Malzor, o necromante sombrio.
+
+Durante as batalhas é possível:
+- atacar
+- defender
+- usar poções
+- visualizar animações
+- acompanhar barras de vida em ASCII
 
 ---
 
@@ -13,60 +29,77 @@ O jogador escolhe uma classe, enfrenta inimigos em batalhas por turnos e derrota
 
 No ano de 1247, o reino mergulhou nas sombras.
 
-O necromante Malzor retornou dos mortos e sequestrou a princesa Layla.
+O necromante Malzor retornou após décadas desaparecido e sequestrou a princesa Layla.
 
-Agora apenas um herói pode enfrentar criaturas sombrias, atravessar o reino amaldiçoado e derrotar Malzor.
+Criaturas amaldiçoadas espalharam o caos pelas terras do reino.
 
-O destino do reino está em suas mãos.
+Agora apenas um herói poderá enfrentar o exército sombrio e salvar Layla antes que o reino seja destruído.
 
 ---
 
-# 🎮 Funcionalidades
+# ✨ Funcionalidades
 
-✅ Sistema de batalhas RPG por turnos  
-✅ Escolha de classes  
-✅ Arte ASCII para personagens e inimigos  
-✅ Introdução cinematográfica estilo Star Wars  
-✅ Sistema de poções  
-✅ Sistema de defesa  
-✅ Animações de ataque  
-✅ Animações de defesa  
-✅ Animações de cura  
-✅ Efeito CRT retrô  
-✅ Tela de Game Over  
-✅ Tela de Vitória  
+## ⚔️ Sistema de batalha RPG
+- combate por turnos
+- dano aleatório
+- defesa dinâmica
+- sistema de poções
+
+---
+
+## 🎞️ Introdução cinematográfica
+- texto em perspectiva estilo Star Wars
+- rolagem 3D
+- estrelas animadas
+- profundidade visual
+
+---
+
+## 👾 ASCII ART
+- personagens desenhados em ASCII
+- inimigos em ASCII
+- chefes em ASCII
+
+---
+
+## 🎬 Animações
+- animação de ataque
+- animação de defesa
+- animação de cura
+- movimentação dos personagens
+
+---
+
+## 📺 Efeito CRT Retrô
+- scanlines
+- overlay escuro
+- visual de monitor antigo
+
+---
+
+## 🔊 Música
+- música medieval de fundo
+- fadeout ao iniciar o jogo
 
 ---
 
 # 🧙 Classes Jogáveis
 
-## Guerreiro
-- Vida: 120 HP
-- Dano: 10 ~ 18
-- Alta resistência
-
-## Arqueiro
-- Vida: 100 HP
-- Dano: 12 ~ 20
-- Balanceado
-
-## Mago
-- Vida: 80 HP
-- Dano: 15 ~ 25
-- Alto dano
+| Classe | Vida | Dano |
+|---|---|---|
+| Guerreiro | 120 HP | 10 ~ 18 |
+| Arqueiro | 100 HP | 12 ~ 20 |
+| Mago | 80 HP | 15 ~ 25 |
 
 ---
 
-# 👾 Inimigos
+# 👹 Inimigos
 
-## Lobo Sombrio
-Primeiro inimigo do jogo.
-
-## Cavaleiro Corrompido
-Inimigo intermediário.
-
-## Malzor
-Chefe final do jogo.
+| Inimigo | Tipo |
+|---|---|
+| Lobo Sombrio | Monstro |
+| Cavaleiro Corrompido | Elite |
+| Malzor | Boss Final |
 
 ---
 
@@ -107,22 +140,22 @@ Arquivo principal do jogo.
 Responsável por:
 
 * iniciar o jogo
-* escolha de classe
+* seleção de classe
 * gerenciamento das batalhas
-* fluxo principal
+* fluxo geral do jogo
 
 ---
 
 ## batalha.py
 
-Controla:
+Responsável por:
 
 * sistema de combate
-* ataques
+* HUD de batalha
+* animações
+* dano
 * defesa
 * uso de poções
-* animações
-* HUD da batalha
 
 ---
 
@@ -131,40 +164,41 @@ Controla:
 Responsável pelas telas:
 
 * introdução
-* game over
 * vitória
+* game over
 
-Também contém:
+Também controla:
 
-* efeito Star Wars
-* estrelas animadas
+* introdução estilo Star Wars
 * música
+* estrelas
 * efeitos visuais
 
 ---
 
 ## interface.py
 
-Responsável por:
+Responsável pelos elementos gráficos:
 
 * textos
 * barra de vida
-* desenho ASCII
+* ASCII ART
 * efeito CRT
-* caixas da interface
+* caixas ASCII
 
 ---
 
 ## personagens.py
 
-Classe principal dos personagens.
+Classe dos personagens.
 
 Contém:
 
+* atributos
 * ataque
 * defesa
-* poções
-* atributos
+* cura
+* sistema de poções
 
 ---
 
@@ -174,7 +208,7 @@ Armazena todas as artes ASCII:
 
 * heróis
 * monstros
-* chefes
+* chefe final
 
 ---
 
@@ -192,17 +226,15 @@ Configurações globais:
 
 Funções auxiliares do projeto.
 
-Principal:
+Principal função:
 
-* carregamento seguro de arquivos
+* carregamento seguro de assets para PyInstaller
 
 ---
 
 # ⚔️ Sistema de Combate
 
-O combate funciona por turnos.
-
-O jogador pode:
+## Comandos
 
 | Tecla | Ação       |
 | ----- | ---------- |
@@ -210,30 +242,43 @@ O jogador pode:
 | 2     | Defender   |
 | 3     | Usar Poção |
 
-Após a ação do jogador, o inimigo realiza seu ataque.
-
 ---
 
-# 🎞️ Introdução Cinematográfica
+# 🎬 Sistema de Animações
 
-O jogo possui:
+## Ataque
 
-* rolagem de texto em perspectiva
-* efeito estilo Star Wars
-* estrelas no fundo
-* profundidade visual
+O personagem avança em direção ao inimigo.
+
+## Defesa
+
+Escudo visual animado ao redor do jogador.
+
+## Cura
+
+Efeito circular de energia verde.
 
 ---
 
 # 📺 Efeito CRT
 
-O jogo aplica:
+O jogo utiliza:
 
-* scanlines
-* overlay escuro
-* aparência retrô
+* scanlines horizontais
+* overlay escuro transparente
+* visual retrô
 
 Inspirado em monitores antigos.
+
+---
+
+# 🔊 Música
+
+A música medieval é carregada através da pasta:
+
+```bash
+assets/sons/medieval.mp3
+```
 
 ---
 
@@ -247,7 +292,7 @@ pip install pygame
 
 ---
 
-## Executar o jogo
+## Rodar o jogo
 
 ```bash
 python main.py
@@ -255,63 +300,54 @@ python main.py
 
 ---
 
-# 🔊 Música
-
-O projeto suporta música de fundo.
-
-Arquivo esperado:
-
-```bash
-assets/sons/medieval.mp3
-```
-
----
-
 # 📦 Gerar Executável (.exe)
 
-Instale o PyInstaller:
+## Instalar PyInstaller
 
 ```bash
 pip install pyinstaller
 ```
 
-Gerar executável:
+---
+
+## Gerar executável
 
 ```bash
-pyinstaller --onefile --windowed main.py
+pyinstaller --onefile --windowed --add-data "assets;assets" main.py
 ```
 
 ---
 
-# 🧠 Conceitos Utilizados
+# 🧠 Conceitos de Programação Utilizados
 
-O projeto utiliza diversos conceitos de programação:
+O projeto utiliza:
 
 * Programação Orientada a Objetos
+* Modularização
 * Loops
 * Eventos
-* Funções
-* Modularização
-* Animações
-* Manipulação gráfica
-* Sistema de estados
+* Renderização gráfica
+* Manipulação de superfícies
+* Sistema de animação
 * Randomização
+* Estados de jogo
 * Interface gráfica
+* Organização de projeto
 
 ---
 
 # 🚀 Melhorias Futuras
 
-* Sistema de níveis
-* Inventário
-* Loja
-* Mais inimigos
-* Magias especiais
-* Sons de batalha
-* Efeitos visuais avançados
-* Sistema de mapa
-* Bosses adicionais
-* Multiplayer local
+* sistema de níveis
+* inventário
+* mapa explorável
+* loja
+* magias especiais
+* efeitos sonoros
+* partículas
+* múltiplos bosses
+* save/load
+* multiplayer local
 
 ---
 
@@ -323,7 +359,5 @@ Projeto desenvolvido para fins educacionais utilizando Python + Pygame.
 
 # 📜 Licença
 
-Projeto livre para estudos e modificações.
+Projeto livre para estudos, modificações e aprendizado.
 
-```
-```
