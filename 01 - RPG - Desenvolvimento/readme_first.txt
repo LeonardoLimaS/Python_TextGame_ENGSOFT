@@ -9,27 +9,35 @@ Para funcionamento do projeto
 # pyinstaller --onefile --windowed --add-data "assets;assets" main.py
 
 
-Obs.: Para debugar o projeto usando o VScode, o caminho que aponta para o arquivo MP3, não é encontrado,
-comente as linhas no arquivo (historia.py):
 
 
-Comentar todo esse bloco
+
+
+
+
+
+# Música
+1 - Para debugar e não gerar erro para encontrar o arquivo da música, utilizar caminho absoluto.
+2 - Quando for compilar e gerar o executável, utilizar o caminho relativo.
+
+Obs.: Para debugar o projeto usando o VScode, e o caminho que aponta para o arquivo MP3, não seja encontrado,
+comente as linhas no arquivo (historia.py), todo o bloco Música e a linha (pygame.mixer.music.fadeout..) no final do arquivo bloco EVENTOS:
+
 #########################
 #    Música             #
 #########################
-#pygame.mixer.init()                            
+pygame.mixer.init()                            
 
-#caminho_musica = caminho_recurso(
-#    "assets/sons/medieval.mp3"
-#)
+relativo -> caminho_musica = caminho_recurso("assets/sons/medieval.mp3")
 
-#print(caminho_musica)
+absoluto -> caminho_musica = caminho_recurso(r"C:\Onedrive-Univassouras\OneDrive - Universidade de Vassouras\1 período\Matérias\Pensamento Computacional\TextGame\JogoGrupo\01 - RPG - Desenvolvimento\dist\assetss\sons\medieval.mp3")
+  
 
-#pygame.mixer.music.load(caminho_musica)
+print(caminho_musica)
+
+pygame.mixer.music.load(caminho_musica)
 
 
-
-Comentar somente a linha ....mixer.music.fadeout...
 # =====================================
 # EVENTOS
 # =====================================
@@ -45,6 +53,6 @@ Comentar somente a linha ....mixer.music.fadeout...
 
                 if evento.key == pygame.K_RETURN:
 
-                    #pygame.mixer.music.fadeout(2000) <<<<-------------------------- COMENTAR
+                    pygame.mixer.music.fadeout(2000) ->Fade da música ao entrar na partida
 
                     executando = False

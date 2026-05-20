@@ -20,15 +20,32 @@ from interface import (
 #########################
 #    Música             #
 #########################
-pygame.mixer.init()
+#pygame.mixer.init()
 
-caminho_musica = caminho_recurso(
-    "assets/sons/medieval.mp3"
-)
+#caminho_musica = caminho_recurso(
+#    "assets/sons/medieval.mp3"
+#)
 
-print(caminho_musica)
+#print(caminho_musica)
 
-pygame.mixer.music.load(caminho_musica)
+#pygame.mixer.music.load(caminho_musica)
+
+
+#########################
+#    Música             #
+#########################
+#pygame.mixer.init()
+
+#caminho_musica = caminho_recurso(r"C:\Onedrive-Univassouras\OneDrive - Universidade de Vassouras\1 período\Matérias\Pensamento Computacional\TextGame\JogoGrupo\01 - RPG - Desenvolvimento\dist\assetss\sons\medieval.mp3")
+
+#Mostrar o caminho absoluto do arquivo MP3
+#print(caminho_musica)
+
+#pygame.mixer.music.load(caminho_musica)
+
+
+
+
 
 
 # =========================================
@@ -366,7 +383,7 @@ def tela_introducao(tela):
 
                 if evento.key == pygame.K_RETURN:
 
-                    pygame.mixer.music.fadeout(2000)
+                    #pygame.mixer.music.fadeout(2000)
 
                     executando = False
 
