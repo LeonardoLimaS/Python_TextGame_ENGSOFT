@@ -2,6 +2,7 @@ import math
 import random
 import sys
 import pygame
+import os
 
 from utilidades import caminho_recurso
 from config import *
@@ -13,14 +14,21 @@ from interface import (
     efeito_crt
 )
 
-# pygame.mixer.init()
 
-# Música medieval
-# pygame.mixer.music.load(
-#     caminho_recurso("RPG\assets\sons\medieval.mp3")
-# )
 
-# pygame.mixer.music.play(5)
+
+#########################
+#    Música             #
+#########################
+pygame.mixer.init()
+
+caminho_musica = caminho_recurso(
+    "assets/sons/medieval.mp3"
+)
+
+print(caminho_musica)
+
+pygame.mixer.music.load(caminho_musica)
 
 
 # =========================================
@@ -358,7 +366,7 @@ def tela_introducao(tela):
 
                 if evento.key == pygame.K_RETURN:
 
-                    # pygame.mixer.music.fadeout(2000)
+                    pygame.mixer.music.fadeout(2000)
 
                     executando = False
 
