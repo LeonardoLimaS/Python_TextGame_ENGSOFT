@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 ````md
+=======
+>>>>>>> 902b6a3fe5fcd1931989104b7220ba135a24abd9
 # 🏰 O Resgate da Princesa Layla
 
 Um jogo RPG retrô em ASCII desenvolvido em Python utilizando a biblioteca Pygame.
@@ -53,6 +56,7 @@ Agora apenas um herói poderá enfrentar o exército sombrio e salvar Layla ante
 - rolagem 3D
 - estrelas animadas
 - profundidade visual
+<<<<<<< HEAD
 
 ---
 
@@ -96,6 +100,51 @@ Agora apenas um herói poderá enfrentar o exército sombrio e salvar Layla ante
 
 # 👹 Inimigos
 
+=======
+
+---
+
+## 👾 ASCII ART
+- personagens desenhados em ASCII
+- inimigos em ASCII
+- chefes em ASCII
+
+---
+
+## 🎬 Animações
+- animação de ataque
+- animação de defesa
+- animação de cura
+- movimentação dos personagens
+
+---
+
+## 📺 Efeito CRT Retrô
+- scanlines
+- overlay escuro
+- visual de monitor antigo
+
+---
+
+## 🔊 Música
+- música medieval de fundo
+- fadeout ao iniciar o jogo
+
+---
+
+# 🧙 Classes Jogáveis
+
+| Classe | Vida | Dano |
+|---|---|---|
+| Guerreiro | 120 HP | 10 ~ 18 |
+| Arqueiro | 100 HP | 12 ~ 20 |
+| Mago | 80 HP | 15 ~ 25 |
+
+---
+
+# 👹 Inimigos
+
+>>>>>>> 902b6a3fe5fcd1931989104b7220ba135a24abd9
 | Inimigo | Tipo |
 |---|---|
 | Lobo Sombrio | Monstro |
@@ -250,6 +299,7 @@ Principal função:
 ## Ataque
 
 O personagem avança em direção ao inimigo.
+<<<<<<< HEAD
 
 ## Defesa
 
@@ -257,6 +307,15 @@ Escudo visual animado ao redor do jogador.
 
 ## Cura
 
+=======
+
+## Defesa
+
+Escudo visual animado ao redor do jogador.
+
+## Cura
+
+>>>>>>> 902b6a3fe5fcd1931989104b7220ba135a24abd9
 Efeito circular de energia verde.
 
 ---
@@ -362,5 +421,3 @@ Projeto desenvolvido para fins educacionais utilizando Python + Pygame.
 
 Projeto livre para estudos, modificações e aprendizado.
 
-```
-```
