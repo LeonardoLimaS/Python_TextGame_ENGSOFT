@@ -160,7 +160,7 @@ def efeito_crt(tela):
 
         pygame.draw.line(
             tela,
-            (0, 35, 0),
+            (20, 20, 20),
             (0, y),
             (LARGURA, y)
         )
@@ -190,7 +190,7 @@ def efeito_crt(tela):
         pygame.SRCALPHA
     )
 
-    glow.fill((0, 255, 70, 8))
+    glow.fill((255, 255, 255, 5))
 
     tela.blit(
         glow,

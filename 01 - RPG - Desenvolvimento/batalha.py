@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import math
 
 from config import *
 
@@ -15,6 +16,33 @@ from interface import (
 )
 
 from ascii_art import *
+
+
+# =========================================
+# ITENS QUE PODEM CAIR DOS INIMIGOS
+# =========================================
+
+TABELA_DROP = [
+    ("pocao_vida",       45),   # 45% chance
+    ("pocao_resistencia", 30),  # 30% chance
+    (None,               25),   # 25% sem drop
+]
+
+
+def sortear_drop():
+    """Sorteia um item aleatório baseado nas chances da tabela."""
+
+    roll = random.randint(1, 100)
+    acumulado = 0
+
+    for item, chance in TABELA_DROP:
+
+        acumulado += chance
+
+        if roll <= acumulado:
+            return item
+
+    return None
 
 
 # =========================================
@@ -54,7 +82,8 @@ def desenhar_tela(
     x_jogador,
     x_inimigo,
     shake_x=0,
-    shake_y=0
+    shake_y=0,
+    modo_menu="principal"
 ):
 
     tela.fill(PRETO)
@@ -118,7 +147,7 @@ def desenhar_tela(
         tela,
         f"INIMIGO: {inimigo.nome}",
         fonte,
-        VERDE,
+        VERMELHO,
         620 + shake_x,
         120 + shake_y
     )
@@ -140,7 +169,7 @@ def desenhar_tela(
         arte_inimigo,
         x_inimigo + shake_x,
         220 + shake_y,
-        VERDE,
+        VERMELHO,
         fonte
     )
 
@@ -156,41 +185,101 @@ def desenhar_tela(
         2
     )
 
-    desenhar_texto(
-        tela,
-        "[1] ATACAR",
-        fonte,
-        VERDE,
-        80,
-        520
-    )
+    if modo_menu == "itens":
 
-    desenhar_texto(
-        tela,
-        "[2] DEFENDER",
-        fonte,
-        VERDE,
-        80,
-        570
-    )
+        # ============================
+        # SUBMENU DE ITENS
+        # ============================
 
-    desenhar_texto(
-        tela,
-        "[3] POCAO",
-        fonte,
-        VERDE,
-        80,
-        620
-    )
+        desenhar_texto(
+            tela,
+            "[ ITENS ]",
+            fonte_titulo,
+            AMARELO,
+            80,
+            490
+        )
 
-    desenhar_texto(
-        tela,
-        f"POCOES: {jogador.pocoes}",
-        fonte,
-        VERDE,
-        350,
-        620
-    )
+        qtd_vida = jogador.inventario["pocao_vida"]
+        qtd_res = jogador.inventario["pocao_resistencia"]
+
+        cor_vida = VERDE if qtd_vida > 0 else CINZA
+        cor_res = AZUL if qtd_res > 0 else CINZA
+
+        desenhar_texto(
+            tela,
+            f"[4] POCAO DE VIDA      x{qtd_vida}  (+30~50 HP)",
+            fonte,
+            cor_vida,
+            80,
+            540
+        )
+
+        desenhar_texto(
+            tela,
+            f"[5] POCAO DE RESIST.   x{qtd_res}  (-8~15 dano)",
+            fonte,
+            cor_res,
+            80,
+            590
+        )
+
+        desenhar_texto(
+            tela,
+            "[ESC] VOLTAR",
+            fonte,
+            CINZA,
+            80,
+            640
+        )
+
+    else:
+
+        # ============================
+        # MENU PRINCIPAL
+        # ============================
+
+        desenhar_texto(
+            tela,
+            "[1] ATACAR",
+            fonte,
+            VERDE,
+            80,
+            520
+        )
+
+        desenhar_texto(
+            tela,
+            "[2] DEFENDER",
+            fonte,
+            VERDE,
+            80,
+            570
+        )
+
+        desenhar_texto(
+            tela,
+            "[3] ITENS",
+            fonte,
+            AMARELO,
+            80,
+            620
+        )
+
+        # Pocoes legadas
+        qtd_total = (
+            jogador.inventario["pocao_vida"] +
+            jogador.inventario["pocao_resistencia"]
+        )
+
+        desenhar_texto(
+            tela,
+            f"Itens: {qtd_total}",
+            fonte,
+            AMARELO,
+            350,
+            620
+        )
 
     desenhar_texto(
         tela,
@@ -198,7 +287,7 @@ def desenhar_tela(
         fonte,
         VERDE,
         80,
-        680
+        700
     )
 
 
@@ -206,90 +295,164 @@ def desenhar_tela(
 # FLASH IMPACTO
 # =========================================
 
-def flash_impacto(tela):
+def flash_impacto(tela, cor=(255, 255, 255)):
 
     flash = pygame.Surface(
         (LARGURA, ALTURA)
     )
 
-    flash.fill((255, 255, 255))
+    flash.fill(cor)
+
+    flash.set_alpha(180)
 
     tela.blit(flash, (0, 0))
 
     pygame.display.update()
 
-    pygame.time.delay(40)
+    pygame.time.delay(50)
 
 
 # =========================================
-# ANIMAÇÃO ATAQUE
+# ANIMAÇÃO ATAQUE DO JOGADOR
 # =========================================
 
-def animacao_ataque(
-    tela,
-    jogador,
-    inimigo,
-    mensagem,
-    atacante="jogador"
-):
-
-    clock = pygame.time.Clock()
-
-    if atacante == "jogador":
-
-        for x in range(100, 220, 12):
-
-            desenhar_tela(
-                tela,
-                jogador,
-                inimigo,
-                mensagem,
-                x,
-                650
-            )
-
-            efeito_crt(tela)
-
-            pygame.display.update()
-
-            clock.tick(60)
-
-    else:
-
-        for x in range(650, 520, -12):
-
-            desenhar_tela(
-                tela,
-                jogador,
-                inimigo,
-                mensagem,
-                100,
-                x
-            )
-
-            efeito_crt(tela)
-
-            pygame.display.update()
-
-            clock.tick(60)
-
-    flash_impacto(tela)
-
-
-# =========================================
-# ANIMAÇÃO DEFESA
-# =========================================
-
-def animacao_defesa(
+def animacao_ataque_jogador(
     tela,
     jogador,
     inimigo,
     mensagem
 ):
+    """Jogador avança para a direita com rastro verde."""
 
     clock = pygame.time.Clock()
 
-    for i in range(6):
+    # Avançar
+    for x in range(100, 260, 15):
+
+        desenhar_tela(
+            tela,
+            jogador,
+            inimigo,
+            mensagem,
+            x,
+            650
+        )
+
+        # Rastro de luz
+        rastro = pygame.Surface(
+            (LARGURA, ALTURA),
+            pygame.SRCALPHA
+        )
+
+        pygame.draw.rect(
+            rastro,
+            (220, 220, 220, 55),
+            (100, 200, x - 100, 220)
+        )
+
+        tela.blit(rastro, (0, 0))
+
+        efeito_crt(tela)
+        pygame.display.update()
+        clock.tick(60)
+
+    flash_impacto(tela, (255, 255, 255))
+
+    # Recuar
+    for x in range(260, 100, -15):
+
+        desenhar_tela(
+            tela,
+            jogador,
+            inimigo,
+            mensagem,
+            x,
+            650
+        )
+
+        efeito_crt(tela)
+        pygame.display.update()
+        clock.tick(60)
+
+
+# =========================================
+# ANIMAÇÃO ATAQUE DO INIMIGO
+# =========================================
+
+def animacao_ataque_inimigo(
+    tela,
+    jogador,
+    inimigo,
+    mensagem
+):
+    """Inimigo avança para a esquerda com rastro vermelho."""
+
+    clock = pygame.time.Clock()
+
+    # Avançar
+    for x in range(650, 490, -15):
+
+        desenhar_tela(
+            tela,
+            jogador,
+            inimigo,
+            mensagem,
+            100,
+            x
+        )
+
+        # Rastro de luz
+        rastro = pygame.Surface(
+            (LARGURA, ALTURA),
+            pygame.SRCALPHA
+        )
+
+        pygame.draw.rect(
+            rastro,
+            (180, 180, 180, 55),
+            (x, 200, 650 - x, 220)
+        )
+
+        tela.blit(rastro, (0, 0))
+
+        efeito_crt(tela)
+        pygame.display.update()
+        clock.tick(60)
+
+    flash_impacto(tela, (200, 200, 200))
+
+    # Recuar
+    for x in range(490, 650, 15):
+
+        desenhar_tela(
+            tela,
+            jogador,
+            inimigo,
+            mensagem,
+            100,
+            x
+        )
+
+        efeito_crt(tela)
+        pygame.display.update()
+        clock.tick(60)
+
+
+# =========================================
+# ANIMAÇÃO DEFESA DO JOGADOR
+# =========================================
+
+def animacao_defesa_jogador(
+    tela,
+    jogador,
+    inimigo,
+    mensagem
+):
+    """Escudo pulsante azul ao redor do jogador."""
+
+    clock = pygame.time.Clock()
+
+    for i in range(10):
 
         desenhar_tela(
             tela,
@@ -300,35 +463,53 @@ def animacao_defesa(
             650
         )
 
+        # Anel pulsante
+        raio = 55 + int(math.sin(i * 0.6) * 15)
+        alpha = 200 - i * 12
+
+        escudo = pygame.Surface(
+            (LARGURA, ALTURA),
+            pygame.SRCALPHA
+        )
+
         pygame.draw.circle(
-            tela,
-            AZUL,
-            (180, 320),
-            80,
+            escudo,
+            (220, 220, 220, max(30, alpha)),
+            (185, 330),
+            raio,
             4
         )
 
+        pygame.draw.circle(
+            escudo,
+            (160, 160, 160, max(15, alpha // 2)),
+            (185, 330),
+            raio - 10,
+            2
+        )
+
+        tela.blit(escudo, (0, 0))
+
         efeito_crt(tela)
-
         pygame.display.update()
-
-        clock.tick(10)
+        clock.tick(15)
 
 
 # =========================================
-# ANIMAÇÃO POÇÃO
+# ANIMAÇÃO DEFESA DO INIMIGO
 # =========================================
 
-def animacao_pocao(
+def animacao_defesa_inimigo(
     tela,
     jogador,
     inimigo,
     mensagem
 ):
+    """Escudo pulsante vermelho ao redor do inimigo."""
 
     clock = pygame.time.Clock()
 
-    for i in range(8):
+    for i in range(10):
 
         desenhar_tela(
             tela,
@@ -339,19 +520,223 @@ def animacao_pocao(
             650
         )
 
+        raio = 55 + int(math.sin(i * 0.6) * 15)
+        alpha = 200 - i * 12
+
+        escudo = pygame.Surface(
+            (LARGURA, ALTURA),
+            pygame.SRCALPHA
+        )
+
         pygame.draw.circle(
+            escudo,
+            (200, 200, 200, max(30, alpha)),
+            (735, 330),
+            raio,
+            4
+        )
+
+        pygame.draw.circle(
+            escudo,
+            (130, 130, 130, max(15, alpha // 2)),
+            (735, 330),
+            raio - 10,
+            2
+        )
+
+        tela.blit(escudo, (0, 0))
+
+        efeito_crt(tela)
+        pygame.display.update()
+        clock.tick(15)
+
+
+# =========================================
+# ANIMAÇÃO POÇÃO DE VIDA
+# =========================================
+
+def animacao_pocao_vida(
+    tela,
+    jogador,
+    inimigo,
+    mensagem
+):
+
+    clock = pygame.time.Clock()
+
+    for i in range(10):
+
+        desenhar_tela(
             tela,
-            VERDE,
-            (180, 320),
-            20 + i * 6,
+            jogador,
+            inimigo,
+            mensagem,
+            100,
+            650
+        )
+
+        surf = pygame.Surface(
+            (LARGURA, ALTURA),
+            pygame.SRCALPHA
+        )
+
+        pygame.draw.circle(
+            surf,
+            (220, 220, 220, 180 - i * 15),
+            (185, 330),
+            20 + i * 8,
             3
         )
 
+        pygame.draw.circle(
+            surf,
+            (160, 160, 160, 100 - i * 8),
+            (185, 330),
+            10 + i * 8,
+            2
+        )
+
+        tela.blit(surf, (0, 0))
+
         efeito_crt(tela)
-
         pygame.display.update()
-
         clock.tick(20)
+
+
+# =========================================
+# ANIMAÇÃO POÇÃO DE RESISTÊNCIA
+# =========================================
+
+def animacao_pocao_resistencia(
+    tela,
+    jogador,
+    inimigo,
+    mensagem
+):
+
+    clock = pygame.time.Clock()
+
+    for i in range(12):
+
+        desenhar_tela(
+            tela,
+            jogador,
+            inimigo,
+            mensagem,
+            100,
+            650
+        )
+
+        surf = pygame.Surface(
+            (LARGURA, ALTURA),
+            pygame.SRCALPHA
+        )
+
+        # Hexágono pulsante roxo
+        angulo = i * 30
+        raio = 40 + i * 4
+
+        pontos = []
+
+        for lado in range(6):
+
+            rad = math.radians(angulo + lado * 60)
+
+            px = 185 + int(raio * math.cos(rad))
+            py = 330 + int(raio * math.sin(rad))
+
+            pontos.append((px, py))
+
+        pygame.draw.polygon(
+            surf,
+            (200, 200, 200, max(30, 200 - i * 14)),
+            pontos,
+            3
+        )
+
+        tela.blit(surf, (0, 0))
+
+        efeito_crt(tela)
+        pygame.display.update()
+        clock.tick(20)
+
+
+# =========================================
+# ANIMAÇÃO DROP DE ITEM
+# =========================================
+
+def animacao_drop_item(
+    tela,
+    jogador,
+    inimigo,
+    nome_item
+):
+    """Exibe animação de item caindo do inimigo derrotado."""
+
+    clock = pygame.time.Clock()
+
+    nomes = {
+        "pocao_vida": "*** POCAO DE VIDA ENCONTRADA! ***",
+        "pocao_resistencia": "*** POCAO DE RESISTENCIA ENCONTRADA! ***"
+    }
+
+    cores = {
+        "pocao_vida": VERDE,
+        "pocao_resistencia": AZUL
+    }
+
+    texto = nomes.get(nome_item, "Item desconhecido")
+    cor = cores.get(nome_item, BRANCO)
+
+    for i in range(40):
+
+        desenhar_tela(
+            tela,
+            jogador,
+            inimigo,
+            texto,
+            100,
+            650
+        )
+
+        # Partículas subindo
+        surf = pygame.Surface(
+            (LARGURA, ALTURA),
+            pygame.SRCALPHA
+        )
+
+        for j in range(8):
+
+            ang = math.radians(j * 45 + i * 5)
+            dist = i * 3
+
+            px = 735 + int(dist * math.cos(ang))
+            py = 330 + int(dist * math.sin(ang))
+
+            pygame.draw.circle(
+                surf,
+                (*cor, max(0, 200 - i * 5)),
+                (px, py),
+                5
+            )
+
+        tela.blit(surf, (0, 0))
+
+        # Texto piscante
+        if i % 6 < 4:
+
+            desenhar_texto(
+                tela,
+                texto,
+                fonte,
+                cor,
+                160,
+                440
+            )
+
+        efeito_crt(tela)
+        pygame.display.update()
+        clock.tick(30)
 
 
 # =========================================
@@ -371,6 +756,8 @@ def tela_batalha(
     defesa = 0
 
     shake = 0
+
+    modo_menu = "principal"
 
     while True:
 
@@ -394,7 +781,8 @@ def tela_batalha(
             100,
             650,
             shake_x,
-            shake_y
+            shake_y,
+            modo_menu
         )
 
         efeito_crt(tela)
@@ -411,80 +799,207 @@ def tela_batalha(
             if evento.type == pygame.KEYDOWN:
 
                 # =================================
-                # ATAQUE
+                # VOLTAR AO MENU PRINCIPAL
                 # =================================
 
-                if evento.key == pygame.K_1:
+                if evento.key == pygame.K_ESCAPE:
 
-                    animacao_ataque(
-                        tela,
-                        jogador,
-                        inimigo,
-                        mensagem,
-                        "jogador"
-                    )
+                    modo_menu = "principal"
 
-                    dano = jogador.atacar()
+                    mensagem = "Seu turno"
 
-                    inimigo.vida = max(
-                        0,
-                        inimigo.vida - dano
-                    )
-
-                    mensagem = (
-                        f"Voce causou {dano} dano!"
-                    )
+                    continue
 
                 # =================================
-                # DEFESA
+                # SUBMENU DE ITENS
                 # =================================
 
-                elif evento.key == pygame.K_2:
+                if modo_menu == "itens":
 
-                    defesa = jogador.defender()
+                    # POÇÃO DE VIDA [4]
+                    if evento.key == pygame.K_4:
 
-                    animacao_defesa(
-                        tela,
-                        jogador,
-                        inimigo,
-                        mensagem
-                    )
+                        resultado, valor = jogador.usar_item("pocao_vida")
 
-                    mensagem = (
-                        f"Defesa ativada ({defesa})"
-                    )
+                        if resultado == "vida":
+
+                            animacao_pocao_vida(
+                                tela,
+                                jogador,
+                                inimigo,
+                                mensagem
+                            )
+
+                            mensagem = (
+                                f"Pocao de vida usada! +{valor} HP"
+                            )
+
+                        else:
+
+                            mensagem = "Sem pocoes de vida!"
+
+                        modo_menu = "principal"
+
+                    # POÇÃO DE RESISTÊNCIA [5]
+                    elif evento.key == pygame.K_5:
+
+                        resultado, valor = jogador.usar_item("pocao_resistencia")
+
+                        if resultado == "resistencia":
+
+                            animacao_pocao_resistencia(
+                                tela,
+                                jogador,
+                                inimigo,
+                                mensagem
+                            )
+
+                            mensagem = (
+                                f"Resistencia ativada! -{valor} dano"
+                            )
+
+                        else:
+
+                            mensagem = "Sem pocoes de resistencia!"
+
+                        modo_menu = "principal"
+
+                    else:
+
+                        continue
 
                 # =================================
-                # POÇÃO
+                # MENU PRINCIPAL
                 # =================================
 
-                elif evento.key == pygame.K_3:
+                else:
 
-                    cura = jogador.usar_pocao()
+                    # ATAQUE [1]
+                    if evento.key == pygame.K_1:
 
-                    animacao_pocao(
-                        tela,
-                        jogador,
-                        inimigo,
-                        mensagem
-                    )
+                        animacao_ataque_jogador(
+                            tela,
+                            jogador,
+                            inimigo,
+                            mensagem
+                        )
 
-                    mensagem = (
-                        f"Curou {cura} HP"
-                    )
+                        dano = jogador.atacar()
+
+                        inimigo.vida = max(
+                            0,
+                            inimigo.vida - dano
+                        )
+
+                        if jogador.critico:
+
+                            mensagem = (
+                                f"CRITICO! Causou {dano} dano!"
+                            )
+
+                        else:
+
+                            mensagem = (
+                                f"Voce causou {dano} dano!"
+                            )
+
+                    # DEFESA [2]
+                    elif evento.key == pygame.K_2:
+
+                        defesa = jogador.defender()
+
+                        animacao_defesa_jogador(
+                            tela,
+                            jogador,
+                            inimigo,
+                            mensagem
+                        )
+
+                        mensagem = (
+                            f"Defesa ativada! (-{defesa} dano)"
+                        )
+
+                    # ITENS [3]
+                    elif evento.key == pygame.K_3:
+
+                        modo_menu = "itens"
+
+                        mensagem = "Escolha um item..."
+
+                        continue
+
+                    else:
+
+                        continue
 
                 # =================================
-                # ATAQUE INIMIGO
+                # VITÓRIA (INIMIGO DERROTADO)
+                # =================================
+
+                if inimigo.vida <= 0:
+
+                    # DROP ALEATÓRIO
+                    drop = sortear_drop()
+
+                    if drop is not None:
+
+                        jogador.inventario[drop] += 1
+
+                        animacao_drop_item(
+                            tela,
+                            jogador,
+                            inimigo,
+                            drop
+                        )
+
+                    return True
+
+                # =================================
+                # ATAQUE DO INIMIGO
                 # =================================
 
                 if inimigo.vida > 0:
 
-                    animacao_ataque(
+                    # Inimigo tem 20% de chance de defender
+                    chance_defesa = random.randint(1, 100)
+
+                    if chance_defesa <= 20:
+
+                        inimigo.defender()
+
+                        animacao_defesa_inimigo(
+                            tela,
+                            jogador,
+                            inimigo,
+                            mensagem
+                        )
+
+                        mensagem = (
+                            f"{inimigo.nome} se preparou para defender!"
+                        )
+
+                        # Re-desenha antes do ataque
+                        desenhar_tela(
+                            tela,
+                            jogador,
+                            inimigo,
+                            mensagem,
+                            100,
+                            650,
+                            0,
+                            0,
+                            "principal"
+                        )
+
+                        efeito_crt(tela)
+                        pygame.display.update()
+                        pygame.time.delay(600)
+
+                    animacao_ataque_inimigo(
                         tela,
                         jogador,
                         inimigo,
-                        mensagem,
-                        "inimigo"
+                        mensagem
                     )
 
                     dano_inimigo = inimigo.atacar()
@@ -494,14 +1009,34 @@ def tela_batalha(
                         dano_inimigo - defesa
                     )
 
+                    # Aplica resistencia do jogador
+                    if jogador.resistencia_bonus > 0:
+
+                        dano_inimigo = max(
+                            0,
+                            dano_inimigo - jogador.resistencia_bonus
+                        )
+
+                        jogador.resistencia_bonus = 0
+
                     jogador.vida = max(
                         0,
                         jogador.vida - dano_inimigo
                     )
 
-                    mensagem = (
-                        f"{inimigo.nome} causou {dano_inimigo} dano!"
-                    )
+                    defesa = 0
+
+                    if inimigo.critico:
+
+                        mensagem = (
+                            f"CRITICO! {inimigo.nome} causou {dano_inimigo} dano!"
+                        )
+
+                    else:
+
+                        mensagem = (
+                            f"{inimigo.nome} causou {dano_inimigo} dano!"
+                        )
 
                     shake = 8
 
@@ -513,10 +1048,4 @@ def tela_batalha(
 
                     return False
 
-                # =================================
-                # VITÓRIA
-                # =================================
-
-                if inimigo.vida <= 0:
-
-                    return True
+                modo_menu = "principal"

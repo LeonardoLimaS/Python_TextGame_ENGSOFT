@@ -57,7 +57,7 @@ def escolher_classe(tela):
 
                 aumentando = True
 
-        verde_brilho = (0, brilho + 100, 0)
+        verde_brilho = (220, 220, 220)
 
         # =====================================
         # CAIXA ASCII

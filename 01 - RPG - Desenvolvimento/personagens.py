@@ -22,8 +22,14 @@ class Personagem:
         self.ataque_min = ataque_min
         self.ataque_max = ataque_max
 
-        # ITENS
+        # ITENS LEGADOS
         self.pocoes = pocoes
+
+        # INVENTÁRIO DE ITENS
+        self.inventario = {
+            "pocao_vida": 0,
+            "pocao_resistencia": 0
+        }
 
         # STATUS
         self.defendendo = False
@@ -32,6 +38,9 @@ class Personagem:
         # EFEITOS
         self.critico = False
         self.esquivou = False
+
+        # RESISTÊNCIA TEMPORÁRIA (por poção)
+        self.resistencia_bonus = 0
 
     # =====================================
     # ATAQUE
@@ -108,6 +117,17 @@ class Personagem:
 
             self.defendendo = False
 
+        # RESISTÊNCIA (poção de resistência)
+
+        if self.resistencia_bonus > 0:
+
+            dano = max(
+                0,
+                dano - self.resistencia_bonus
+            )
+
+            self.resistencia_bonus = 0
+
         # APLICA DANO
 
         self.vida = max(
@@ -145,6 +165,45 @@ class Personagem:
         return 0
 
     # =====================================
+    # USAR ITEM DO INVENTÁRIO
+    # =====================================
+
+    def usar_item(self, tipo):
+
+        if tipo == "pocao_vida":
+
+            if self.inventario["pocao_vida"] > 0:
+
+                cura = random.randint(30, 50)
+
+                self.vida = min(
+                    self.vida + cura,
+                    self.vida_max
+                )
+
+                self.inventario["pocao_vida"] -= 1
+
+                return ("vida", cura)
+
+            return ("sem_item", 0)
+
+        elif tipo == "pocao_resistencia":
+
+            if self.inventario["pocao_resistencia"] > 0:
+
+                bonus = random.randint(8, 15)
+
+                self.resistencia_bonus = bonus
+
+                self.inventario["pocao_resistencia"] -= 1
+
+                return ("resistencia", bonus)
+
+            return ("sem_item", 0)
+
+        return ("sem_item", 0)
+
+    # =====================================
     # RESET STATUS
     # =====================================
 
@@ -153,3 +212,4 @@ class Personagem:
         self.defendendo = False
         self.critico = False
         self.esquivou = False
+        self.resistencia_bonus = 0

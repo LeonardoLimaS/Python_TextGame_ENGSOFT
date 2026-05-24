@@ -66,7 +66,7 @@ def tela_vitoria(tela):
             tela,
             "FINAL HEROICO",
             fonte_titulo,
-            (255, 220, 50),
+            AMARELO,
             300,
             280
         )
@@ -302,7 +302,7 @@ def tela_introducao(tela):
             texto = fonte_ascii.render(
                 linha,
                 True,
-                (0, 255, 120)
+                BRANCO
             )
 
             largura = texto.get_width()
