@@ -16,7 +16,7 @@ cavaleiro = Personagem(
 
 malzor = Personagem(
     "Malzor, o Necromante",
-    120,
+    300,
     12,
-    22
+    30
 )
