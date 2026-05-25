@@ -526,9 +526,9 @@ def jogo():
                 dano_max_base = 10
                 nome = "Cavaleiro Corrompido"
 
-            # Escalamento por round: HP (+15% por round), Dano (+10% por round)
-            mult_hp = 1.0 + (round_num - 1) * 0.15
-            mult_dano = 1.0 + (round_num - 1) * 0.10
+            # Escalamento por round: HP (+10% por round), Dano (+7% por round)
+            mult_hp = 1.0 + (round_num - 1) * 0.10
+            mult_dano = 1.0 + (round_num - 1) * 0.7
 
             hp_atual = int(hp_base * mult_hp)
             dano_min_atual = int(dano_min_base * mult_dano)
@@ -545,7 +545,7 @@ def jogo():
             inimigos.append(inimigo)
 
         # O boss no round 10 (HP base 100, dano base 10~18 escalado para o Round 10)
-        boss_hp_base = 100
+        boss_hp_base = 50
         boss_dano_min_base = 5
         boss_dano_max_base = 9
 
