@@ -546,8 +546,8 @@ def jogo():
 
         # O boss no round 10 (HP base 100, dano base 10~18 escalado para o Round 10)
         boss_hp_base = 100
-        boss_dano_min_base = 10
-        boss_dano_max_base = 18
+        boss_dano_min_base = 5
+        boss_dano_max_base = 9
 
         mult_hp_boss = 1.0 + (10 - 1) * 0.15
         mult_dano_boss = 1.0 + (10 - 1) * 0.10
