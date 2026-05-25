@@ -117,12 +117,22 @@ def desenhar_tela(
         680
     )
 
+    # =====================================
+    # TÍTULO DINÂMICO COM INDICADOR DE ROUND
+    # =====================================
+    titulo_texto = "O RESGATE DA PRINCESA LAYLA"
+    if hasattr(inimigo, 'round_atual') and hasattr(inimigo, 'total_rounds'):
+        titulo_texto += f" - ROUND {inimigo.round_atual}/{inimigo.total_rounds}"
+
+    largura_texto = fonte_titulo.size(titulo_texto)[0]
+    pos_x = (LARGURA - largura_texto) // 2
+
     desenhar_texto(
         tela,
-        "O RESGATE DA PRINCESA LAYLA",
+        titulo_texto,
         fonte_titulo,
         VERDE,
-        180 + shake_x,
+        pos_x + shake_x,
         60 + shake_y
     )
 
@@ -918,12 +928,16 @@ def tela_level_up(tela, jogador):
             70
         )
 
+        subiu_texto = f"Nivel {jogador.nivel}  -  {jogador.nome} (+20% HP Regenerado)"
+        largura_subiu = fonte.size(subiu_texto)[0]
+        pos_x_subiu = (LARGURA - largura_subiu) // 2
+
         desenhar_texto(
             tela,
-            f"Nivel {jogador.nivel}  -  {jogador.nome}",
+            subiu_texto,
             fonte,
             BRANCO,
-            310,
+            pos_x_subiu,
             130
         )
 

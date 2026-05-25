@@ -265,6 +265,10 @@ class Personagem:
                 self.nivel * XP_BASE_NIVEL
             )
 
+            # Regenera 20% da vida máxima ao subir de nível
+            cura_nivel = int(self.vida_max * 0.20)
+            self.vida = min(self.vida_max, self.vida + cura_nivel)
+
             return True
 
         return False

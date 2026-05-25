@@ -512,32 +512,41 @@ def jogo():
         # INIMIGOS
         # =====================================
 
-        lobo = Personagem(
-            "Lobo Sombrio",
-            50,
-            8,
-            14
-        )
+        inimigos = []
+        for round_num in range(1, 10):
+            # Alterna entre Lobo Sombrio (ímpar) e Cavaleiro Corrompido (par)
+            if round_num % 2 != 0:
+                inimigo = Personagem(
+                    "Lobo Sombrio",
+                    50,
+                    8,
+                    14
+                )
+            else:
+                inimigo = Personagem(
+                    "Cavaleiro Corrompido",
+                    80,
+                    10,
+                    18
+                )
+            inimigo.round_atual = round_num
+            inimigo.total_rounds = 10
+            inimigos.append(inimigo)
 
-        cavaleiro = Personagem(
-            "Cavaleiro Corrompido",
-            80,
-            10,
-            18
-        )
-
+        # O boss no round 10
         malzor = Personagem(
             "Malzor",
             120,
             12,
             22
         )
+        malzor.round_atual = 10
+        malzor.total_rounds = 10
+        inimigos.append(malzor)
 
         # =====================================
         # BATALHAS
         # =====================================
-
-        inimigos = [lobo, cavaleiro, malzor]
 
         derrotado = False
 
