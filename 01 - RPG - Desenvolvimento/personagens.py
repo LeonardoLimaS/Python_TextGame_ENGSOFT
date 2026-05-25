@@ -37,7 +37,8 @@ class Personagem:
         # INVENTÁRIO DE ITENS
         self.inventario = {
             "pocao_vida": 0,
-            "pocao_resistencia": 0
+            "pocao_resistencia": 0,
+            "pocao_forca": 0
         }
 
         # STATUS
@@ -48,8 +49,9 @@ class Personagem:
         self.critico = False
         self.esquivou = False
 
-        # RESISTÊNCIA TEMPORÁRIA (por poção)
+        # RESISTÊNCIA E FORÇA TEMPORÁRIA (por poção)
         self.resistencia_bonus = 0
+        self.forca_bonus = 0
 
         # =====================================
         # XP E NÍVEL
@@ -77,6 +79,8 @@ class Personagem:
             self.ataque_min,
             self.ataque_max
         )
+
+        dano += self.forca_bonus
 
         # 15% crítico
         chance_critico = random.randint(1, 100)
@@ -148,8 +152,6 @@ class Personagem:
                 0,
                 dano - self.resistencia_bonus
             )
-
-            self.resistencia_bonus = 0
 
         # RESISTÊNCIA PERMANENTE (atributo)
 
@@ -233,6 +235,20 @@ class Personagem:
 
             return ("sem_item", 0)
 
+        elif tipo == "pocao_forca":
+
+            if self.inventario.get("pocao_forca", 0) > 0:
+
+                bonus = random.randint(5, 10)
+
+                self.forca_bonus += bonus
+
+                self.inventario["pocao_forca"] -= 1
+
+                return ("forca", bonus)
+
+            return ("sem_item", 0)
+
         return ("sem_item", 0)
 
     # =====================================
@@ -245,6 +261,7 @@ class Personagem:
         self.critico = False
         self.esquivou = False
         self.resistencia_bonus = 0
+        self.forca_bonus = 0
 
     # =====================================
     # GANHAR XP

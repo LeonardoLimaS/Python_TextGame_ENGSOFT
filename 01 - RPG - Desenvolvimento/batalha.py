@@ -24,9 +24,10 @@ from ascii_art import *
 # =========================================
 
 TABELA_DROP_BASE = [
-    ("pocao_vida",       45),   # 45% chance
-    ("pocao_resistencia", 30),  # 30% chance
-    (None,               25),   # 25% sem drop
+    ("pocao_vida",       40),   # 40% chance
+    ("pocao_resistencia", 25),  # 25% chance
+    ("pocao_forca",       20),  # 20% chance
+    (None,               15),   # 15% sem drop
 ]
 
 
@@ -34,19 +35,21 @@ def sortear_drop(sorte=0):
     """Sorteia um item baseado nas chances, modificadas pela sorte."""
 
     # Calcula chances modificadas pela sorte
-    chance_vida = 45 + (sorte * BONUS_SORTE_VIDA)
-    chance_res = 30 + (sorte * BONUS_SORTE_RESISTENCIA)
-    chance_nada = 25 - (sorte * BONUS_SORTE_NENHUM)
+    chance_vida = 40 + (sorte * BONUS_SORTE_VIDA)
+    chance_res = 25 + (sorte * BONUS_SORTE_RESISTENCIA)
+    chance_forca = 20 + (sorte * 2)
+    chance_nada = 15 - (sorte * BONUS_SORTE_NENHUM)
 
     # Mínimo de 5% para nenhum drop
     chance_nada = max(5, chance_nada)
 
     # Normaliza para 100%
-    total = chance_vida + chance_res + chance_nada
+    total = chance_vida + chance_res + chance_forca + chance_nada
 
     tabela = [
         ("pocao_vida",        chance_vida),
         ("pocao_resistencia", chance_res),
+        ("pocao_forca",       chance_forca),
         (None,                chance_nada),
     ]
 
@@ -242,9 +245,11 @@ def desenhar_tela(
 
         qtd_vida = jogador.inventario["pocao_vida"]
         qtd_res = jogador.inventario["pocao_resistencia"]
+        qtd_forca = jogador.inventario.get("pocao_forca", 0)
 
         cor_vida = VERDE if qtd_vida > 0 else CINZA
         cor_res = AZUL if qtd_res > 0 else CINZA
+        cor_forca = DOURADO if qtd_forca > 0 else CINZA
 
         desenhar_texto(
             tela,
@@ -252,7 +257,7 @@ def desenhar_tela(
             fonte,
             cor_vida,
             80,
-            540
+            530
         )
 
         desenhar_texto(
@@ -261,7 +266,16 @@ def desenhar_tela(
             fonte,
             cor_res,
             80,
-            590
+            570
+        )
+
+        desenhar_texto(
+            tela,
+            f"[6] POCAO DE FORCA     x{qtd_forca}  (+5~10 dano)",
+            fonte,
+            cor_forca,
+            80,
+            610
         )
 
         desenhar_texto(
@@ -270,7 +284,7 @@ def desenhar_tela(
             fonte,
             CINZA,
             80,
-            640
+            650
         )
 
     else:
@@ -306,10 +320,11 @@ def desenhar_tela(
             620
         )
 
-        # Pocoes legadas
+        # Soma todas as poções do inventário
         qtd_total = (
             jogador.inventario["pocao_vida"] +
-            jogador.inventario["pocao_resistencia"]
+            jogador.inventario["pocao_resistencia"] +
+            jogador.inventario.get("pocao_forca", 0)
         )
 
         desenhar_texto(
@@ -717,12 +732,14 @@ def animacao_drop_item(
 
     nomes = {
         "pocao_vida": "*** POCAO DE VIDA ENCONTRADA! ***",
-        "pocao_resistencia": "*** POCAO DE RESISTENCIA ENCONTRADA! ***"
+        "pocao_resistencia": "*** POCAO DE RESISTENCIA ENCONTRADA! ***",
+        "pocao_forca": "*** POCAO DE FORCA ENCONTRADA! ***"
     }
 
     cores = {
         "pocao_vida": VERDE,
-        "pocao_resistencia": AZUL
+        "pocao_resistencia": AZUL,
+        "pocao_forca": DOURADO
     }
 
     texto = nomes.get(nome_item, "Item desconhecido")
@@ -1138,6 +1155,9 @@ def tela_batalha(
     inimigo
 ):
 
+    jogador.resetar_status()
+    inimigo.resetar_status()
+
     clock = pygame.time.Clock()
 
     mensagem = "Seu turno"
@@ -1250,6 +1270,31 @@ def tela_batalha(
                         else:
 
                             mensagem = "Sem pocoes de resistencia!"
+
+                        modo_menu = "principal"
+
+                    # POÇÃO DE FORÇA [6]
+                    elif evento.key == pygame.K_6:
+
+                        resultado, valor = jogador.usar_item("pocao_forca")
+
+                        if resultado == "forca":
+
+                            # Usamos a mesma animação de resistência para manter o rastro hexagonal e visual refinado.
+                            animacao_pocao_resistencia(
+                                tela,
+                                jogador,
+                                inimigo,
+                                mensagem
+                            )
+
+                            mensagem = (
+                                f"Forca ativada! +{valor} dano ate o fim do combate"
+                            )
+
+                        else:
+
+                            mensagem = "Sem pocoes de forca!"
 
                         modo_menu = "principal"
 

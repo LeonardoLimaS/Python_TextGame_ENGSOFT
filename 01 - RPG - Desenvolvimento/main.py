@@ -514,31 +514,53 @@ def jogo():
 
         inimigos = []
         for round_num in range(1, 10):
-            # Alterna entre Lobo Sombrio (ímpar) e Cavaleiro Corrompido (par)
+            # Status base reduzidos
             if round_num % 2 != 0:
-                inimigo = Personagem(
-                    "Lobo Sombrio",
-                    50,
-                    8,
-                    14
-                )
+                hp_base = 30
+                dano_min_base = 4
+                dano_max_base = 8
+                nome = "Lobo Sombrio"
             else:
-                inimigo = Personagem(
-                    "Cavaleiro Corrompido",
-                    80,
-                    10,
-                    18
-                )
+                hp_base = 45
+                dano_min_base = 6
+                dano_max_base = 10
+                nome = "Cavaleiro Corrompido"
+
+            # Escalamento por round: HP (+15% por round), Dano (+10% por round)
+            mult_hp = 1.0 + (round_num - 1) * 0.15
+            mult_dano = 1.0 + (round_num - 1) * 0.10
+
+            hp_atual = int(hp_base * mult_hp)
+            dano_min_atual = int(dano_min_base * mult_dano)
+            dano_max_atual = int(dano_max_base * mult_dano)
+
+            inimigo = Personagem(
+                nome,
+                hp_atual,
+                dano_min_atual,
+                dano_max_atual
+            )
             inimigo.round_atual = round_num
             inimigo.total_rounds = 10
             inimigos.append(inimigo)
 
-        # O boss no round 10
+        # O boss no round 10 (HP base 100, dano base 10~18 escalado para o Round 10)
+        boss_hp_base = 100
+        boss_dano_min_base = 10
+        boss_dano_max_base = 18
+
+        mult_hp_boss = 1.0 + (10 - 1) * 0.15
+        mult_dano_boss = 1.0 + (10 - 1) * 0.10
+
+        hp_boss = int(boss_hp_base * mult_hp_boss)
+        dano_min_boss = int(boss_dano_min_base * mult_dano_boss)
+        dano_max_boss = int(boss_dano_max_base * mult_dano_boss)
+
         malzor = Personagem(
             "Malzor",
-            120,
-            12,
-            22
+            hp_boss,
+            dano_min_boss,
+            dano_max_boss
         )
         malzor.round_atual = 10
         malzor.total_rounds = 10
