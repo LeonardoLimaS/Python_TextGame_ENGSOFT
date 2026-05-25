@@ -1,5 +1,12 @@
 import random
 
+from config import (
+    XP_BASE_NIVEL,
+    BONUS_DANO_POR_PONTO,
+    BONUS_HP_POR_PONTO,
+    BONUS_RESISTENCIA_POR_PONTO
+)
+
 
 class Personagem:
 
@@ -9,7 +16,9 @@ class Personagem:
         vida,
         ataque_min,
         ataque_max,
-        pocoes=1
+        pocoes=1,
+        resistencia_inicial=0,
+        sorte_inicial=0
     ):
 
         self.nome = nome
@@ -41,6 +50,20 @@ class Personagem:
 
         # RESISTÊNCIA TEMPORÁRIA (por poção)
         self.resistencia_bonus = 0
+
+        # =====================================
+        # XP E NÍVEL
+        # =====================================
+
+        self.xp = 0
+        self.nivel = 1
+        self.xp_proximo_nivel = XP_BASE_NIVEL
+
+        # BÔNUS DE ATRIBUTOS
+        self.bonus_dano = 0
+        self.bonus_hp = 0
+        self.resistencia_permanente = resistencia_inicial
+        self.sorte = sorte_inicial
 
     # =====================================
     # ATAQUE
@@ -128,6 +151,15 @@ class Personagem:
 
             self.resistencia_bonus = 0
 
+        # RESISTÊNCIA PERMANENTE (atributo)
+
+        if self.resistencia_permanente > 0:
+
+            dano = max(
+                0,
+                dano - self.resistencia_permanente
+            )
+
         # APLICA DANO
 
         self.vida = max(
@@ -213,3 +245,61 @@ class Personagem:
         self.critico = False
         self.esquivou = False
         self.resistencia_bonus = 0
+
+    # =====================================
+    # GANHAR XP
+    # =====================================
+
+    def ganhar_xp(self, quantidade):
+        """Adiciona XP e retorna True se subiu de nível."""
+
+        self.xp += quantidade
+
+        if self.xp >= self.xp_proximo_nivel:
+
+            self.xp -= self.xp_proximo_nivel
+
+            self.nivel += 1
+
+            self.xp_proximo_nivel = (
+                self.nivel * XP_BASE_NIVEL
+            )
+
+            return True
+
+        return False
+
+    # =====================================
+    # SUBIR NÍVEL (ESCOLHER ATRIBUTO)
+    # =====================================
+
+    def subir_nivel(self, atributo):
+        """Aplica bônus do atributo escolhido."""
+
+        if atributo == "dano":
+
+            self.bonus_dano += BONUS_DANO_POR_PONTO
+
+            self.ataque_min += BONUS_DANO_POR_PONTO
+            self.ataque_max += BONUS_DANO_POR_PONTO
+
+        elif atributo == "hp":
+
+            self.bonus_hp += BONUS_HP_POR_PONTO
+
+            self.vida_max += BONUS_HP_POR_PONTO
+
+            self.vida = min(
+                self.vida + BONUS_HP_POR_PONTO,
+                self.vida_max
+            )
+
+        elif atributo == "resistencia":
+
+            self.resistencia_permanente += (
+                BONUS_RESISTENCIA_POR_PONTO
+            )
+
+        elif atributo == "sorte":
+
+            self.sorte += 1

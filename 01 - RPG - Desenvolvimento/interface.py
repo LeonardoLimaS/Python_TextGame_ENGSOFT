@@ -92,6 +92,49 @@ def desenhar_barra_vida(
 
 
 # =========================================
+# BARRA XP ASCII
+# =========================================
+
+def desenhar_barra_xp(
+    tela,
+    x,
+    y,
+    xp,
+    xp_max,
+    nivel
+):
+
+    total_blocos = 15
+
+    preenchido = int(
+        (xp / xp_max) * total_blocos
+    ) if xp_max > 0 else 0
+
+    vazio = total_blocos - preenchido
+
+    barra = (
+        "=" * preenchido +
+        "-" * vazio
+    )
+
+    texto = (
+        f"Nv.{nivel} [{barra}] "
+        f"{xp}/{xp_max} XP"
+    )
+
+    cor_xp = (255, 215, 0)
+
+    desenhar_texto(
+        tela,
+        texto,
+        fonte,
+        cor_xp,
+        x,
+        y
+    )
+
+
+# =========================================
 # CAIXA ASCII
 # =========================================
 

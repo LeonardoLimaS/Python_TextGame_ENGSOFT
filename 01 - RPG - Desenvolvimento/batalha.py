@@ -8,6 +8,7 @@ from config import *
 from interface import (
     desenhar_texto,
     desenhar_barra_vida,
+    desenhar_barra_xp,
     desenhar_caixa_ascii,
     desenhar_ascii,
     efeito_crt,
@@ -22,20 +23,37 @@ from ascii_art import *
 # ITENS QUE PODEM CAIR DOS INIMIGOS
 # =========================================
 
-TABELA_DROP = [
+TABELA_DROP_BASE = [
     ("pocao_vida",       45),   # 45% chance
     ("pocao_resistencia", 30),  # 30% chance
     (None,               25),   # 25% sem drop
 ]
 
 
-def sortear_drop():
-    """Sorteia um item aleatório baseado nas chances da tabela."""
+def sortear_drop(sorte=0):
+    """Sorteia um item baseado nas chances, modificadas pela sorte."""
 
-    roll = random.randint(1, 100)
+    # Calcula chances modificadas pela sorte
+    chance_vida = 45 + (sorte * BONUS_SORTE_VIDA)
+    chance_res = 30 + (sorte * BONUS_SORTE_RESISTENCIA)
+    chance_nada = 25 - (sorte * BONUS_SORTE_NENHUM)
+
+    # Mínimo de 5% para nenhum drop
+    chance_nada = max(5, chance_nada)
+
+    # Normaliza para 100%
+    total = chance_vida + chance_res + chance_nada
+
+    tabela = [
+        ("pocao_vida",        chance_vida),
+        ("pocao_resistencia", chance_res),
+        (None,                chance_nada),
+    ]
+
+    roll = random.randint(1, total)
     acumulado = 0
 
-    for item, chance in TABELA_DROP:
+    for item, chance in tabela:
 
         acumulado += chance
 
@@ -65,6 +83,9 @@ def obter_arte_personagem(nome):
 
     elif nome == "Cavaleiro Corrompido":
         return CAVALEIRO
+
+    elif nome == "Tadafilado":
+        return TADAFILADO
 
     else:
         return MALZOR
@@ -121,9 +142,18 @@ def desenhar_tela(
     desenhar_barra_vida(
         tela,
         80 + shake_x,
-        160 + shake_y,
+        150 + shake_y,
         jogador.vida,
         jogador.vida_max
+    )
+
+    desenhar_barra_xp(
+        tela,
+        80 + shake_x,
+        180 + shake_y,
+        jogador.xp,
+        jogador.xp_proximo_nivel,
+        jogador.nivel
     )
 
     arte_jogador = obter_arte_personagem(
@@ -740,6 +770,351 @@ def animacao_drop_item(
 
 
 # =========================================
+# ANIMAÇÃO LEVEL UP
+# =========================================
+
+def animacao_level_up(tela):
+    """Efeito de partículas douradas subindo."""
+
+    clock = pygame.time.Clock()
+
+    particulas = []
+
+    for _ in range(30):
+        particulas.append([
+            random.randint(100, 924),
+            random.randint(400, 700),
+            random.uniform(-1, 1),
+            random.uniform(-3, -1),
+            random.randint(2, 5)
+        ])
+
+    for frame in range(40):
+
+        surf = pygame.Surface(
+            (LARGURA, ALTURA),
+            pygame.SRCALPHA
+        )
+
+        for p in particulas:
+
+            alpha = max(
+                0,
+                255 - frame * 6
+            )
+
+            pygame.draw.circle(
+                surf,
+                (255, 215, 0, alpha),
+                (int(p[0]), int(p[1])),
+                p[4]
+            )
+
+            p[0] += p[2]
+            p[1] += p[3]
+
+        tela.blit(surf, (0, 0))
+
+        efeito_crt(tela)
+        pygame.display.update()
+        clock.tick(30)
+
+
+# =========================================
+# TELA LEVEL UP
+# =========================================
+
+def tela_level_up(tela, jogador):
+    """Tela de escolha de atributo ao subir de nível."""
+
+    clock = pygame.time.Clock()
+
+    brilho = 0
+    aumentando = True
+
+    while True:
+
+        clock.tick(FPS)
+
+        tela.fill(PRETO)
+
+        # =====================================
+        # EFEITO BRILHO PULSANTE
+        # =====================================
+
+        if aumentando:
+
+            brilho += 3
+
+            if brilho >= 80:
+
+                aumentando = False
+
+        else:
+
+            brilho -= 3
+
+            if brilho <= 20:
+
+                aumentando = True
+
+        cor_titulo = (
+            255,
+            215 + int(brilho * 0.3),
+            int(brilho)
+        )
+
+        cor_titulo = (
+            min(255, cor_titulo[0]),
+            min(255, cor_titulo[1]),
+            min(255, cor_titulo[2])
+        )
+
+        # =====================================
+        # CAIXA ASCII
+        # =====================================
+
+        desenhar_caixa_ascii(
+            tela,
+            60,
+            40,
+            900,
+            680
+        )
+
+        # =====================================
+        # PARTÍCULAS DOURADAS DE FUNDO
+        # =====================================
+
+        surf = pygame.Surface(
+            (LARGURA, ALTURA),
+            pygame.SRCALPHA
+        )
+
+        for _ in range(5):
+
+            px = random.randint(80, 940)
+            py = random.randint(60, 700)
+
+            pygame.draw.circle(
+                surf,
+                (255, 215, 0, random.randint(20, 60)),
+                (px, py),
+                random.randint(1, 3)
+            )
+
+        tela.blit(surf, (0, 0))
+
+        # =====================================
+        # TÍTULO
+        # =====================================
+
+        desenhar_texto(
+            tela,
+            "*** LEVEL UP! ***",
+            fonte_titulo,
+            cor_titulo,
+            330,
+            70
+        )
+
+        desenhar_texto(
+            tela,
+            f"Nivel {jogador.nivel}  -  {jogador.nome}",
+            fonte,
+            BRANCO,
+            310,
+            130
+        )
+
+        # =====================================
+        # LINHA SEPARADORA
+        # =====================================
+
+        pygame.draw.line(
+            tela,
+            (255, 215, 0),
+            (100, 170),
+            (920, 170),
+            2
+        )
+
+        # =====================================
+        # STATUS ATUAIS
+        # =====================================
+
+        desenhar_texto(
+            tela,
+            "STATUS ATUAIS:",
+            fonte,
+            AMARELO,
+            100,
+            190
+        )
+
+        desenhar_texto(
+            tela,
+            f"HP: {jogador.vida}/{jogador.vida_max}  "
+            f"(+{jogador.bonus_hp})",
+            fonte,
+            VERDE,
+            100,
+            230
+        )
+
+        desenhar_texto(
+            tela,
+            f"Dano: {jogador.ataque_min}~"
+            f"{jogador.ataque_max}  "
+            f"(+{jogador.bonus_dano})",
+            fonte,
+            VERDE,
+            100,
+            265
+        )
+
+        desenhar_texto(
+            tela,
+            f"Resistencia: "
+            f"{jogador.resistencia_permanente}  "
+            f"Sorte: {jogador.sorte}",
+            fonte,
+            VERDE,
+            100,
+            300
+        )
+
+        # =====================================
+        # LINHA SEPARADORA
+        # =====================================
+
+        pygame.draw.line(
+            tela,
+            (255, 215, 0),
+            (100, 340),
+            (920, 340),
+            2
+        )
+
+        # =====================================
+        # OPÇÕES DE ATRIBUTO
+        # =====================================
+
+        desenhar_texto(
+            tela,
+            "ESCOLHA UM ATRIBUTO:",
+            fonte_titulo,
+            AMARELO,
+            260,
+            365
+        )
+
+        # DANO
+        desenhar_texto(
+            tela,
+            f"[1] DANO      (+{BONUS_DANO_POR_PONTO} "
+            f"ataque min/max)",
+            fonte,
+            VERDE,
+            140,
+            430
+        )
+
+        # HP
+        desenhar_texto(
+            tela,
+            f"[2] HP        (+{BONUS_HP_POR_PONTO} "
+            f"vida maxima + cura)",
+            fonte,
+            VERDE,
+            140,
+            480
+        )
+
+        # RESISTÊNCIA
+        desenhar_texto(
+            tela,
+            f"[3] RESISTENCIA  (-{BONUS_RESISTENCIA_POR_PONTO} "
+            f"dano recebido)",
+            fonte,
+            VERDE,
+            140,
+            530
+        )
+
+        # SORTE
+        desenhar_texto(
+            tela,
+            "[4] SORTE     (+chance de drops "
+            "melhores)",
+            fonte,
+            VERDE,
+            140,
+            580
+        )
+
+        # =====================================
+        # INSTRUÇÃO
+        # =====================================
+
+        desenhar_texto(
+            tela,
+            "Pressione 1, 2, 3 ou 4",
+            fonte,
+            (255, 215, 0),
+            320,
+            660
+        )
+
+        # =====================================
+        # EVENTOS
+        # =====================================
+
+        for evento in pygame.event.get():
+
+            if evento.type == pygame.QUIT:
+
+                pygame.quit()
+                sys.exit()
+
+            if evento.type == pygame.KEYDOWN:
+
+                atributo = None
+
+                if evento.key == pygame.K_1:
+
+                    atributo = "dano"
+
+                elif evento.key == pygame.K_2:
+
+                    atributo = "hp"
+
+                elif evento.key == pygame.K_3:
+
+                    atributo = "resistencia"
+
+                elif evento.key == pygame.K_4:
+
+                    atributo = "sorte"
+
+                if atributo is not None:
+
+                    jogador.subir_nivel(atributo)
+
+                    animacao_level_up(tela)
+
+                    return
+
+        # =====================================
+        # CRT
+        # =====================================
+
+        efeito_crt(tela)
+
+        pygame.display.update()
+
+
+# =========================================
 # BATALHA
 # =========================================
 
@@ -938,8 +1313,15 @@ def tela_batalha(
 
                 if inimigo.vida <= 0:
 
-                    # DROP ALEATÓRIO
-                    drop = sortear_drop()
+                    # XP DO INIMIGO
+                    xp_ganho = XP_INIMIGOS.get(
+                        inimigo.nome, 30
+                    )
+
+                    subiu = jogador.ganhar_xp(xp_ganho)
+
+                    # DROP ALEATÓRIO (com sorte)
+                    drop = sortear_drop(jogador.sorte)
 
                     if drop is not None:
 
@@ -950,6 +1332,14 @@ def tela_batalha(
                             jogador,
                             inimigo,
                             drop
+                        )
+
+                    # LEVEL UP
+                    if subiu:
+
+                        tela_level_up(
+                            tela,
+                            jogador
                         )
 
                     return True

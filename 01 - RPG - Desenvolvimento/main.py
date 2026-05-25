@@ -89,7 +89,7 @@ def escolher_classe(tela):
             tela,
             GUERREIRO,
             80,
-            220,
+            200,
             VERDE,
             fonte
         )
@@ -100,16 +100,25 @@ def escolher_classe(tela):
             fonte,
             VERDE,
             80,
-            430
+            500
         )
 
         desenhar_texto(
             tela,
-            "HP: 120",
+            "HP: 120   Dano: 10~18",
             fonte,
             VERDE,
             80,
-            470
+            530
+        )
+
+        desenhar_texto(
+            tela,
+            "Resist: 2   Sorte: 0",
+            fonte,
+            VERDE,
+            80,
+            560
         )
 
         # =====================================
@@ -120,7 +129,7 @@ def escolher_classe(tela):
             tela,
             ARQUEIRO,
             400,
-            220,
+            200,
             VERDE,
             fonte
         )
@@ -131,16 +140,25 @@ def escolher_classe(tela):
             fonte,
             VERDE,
             400,
-            430
+            500
         )
 
         desenhar_texto(
             tela,
-            "HP: 100",
+            "HP: 100   Dano: 12~20",
             fonte,
             VERDE,
             400,
-            470
+            530
+        )
+
+        desenhar_texto(
+            tela,
+            "Resist: 1   Sorte: 1",
+            fonte,
+            VERDE,
+            400,
+            560
         )
 
         # =====================================
@@ -151,7 +169,7 @@ def escolher_classe(tela):
             tela,
             MAGO,
             720,
-            220,
+            200,
             VERDE,
             fonte
         )
@@ -162,16 +180,25 @@ def escolher_classe(tela):
             fonte,
             VERDE,
             720,
-            430
+            500
         )
 
         desenhar_texto(
             tela,
-            "HP: 80",
+            "HP: 80    Dano: 15~25",
             fonte,
             VERDE,
             720,
-            470
+            530
+        )
+
+        desenhar_texto(
+            tela,
+            "Resist: 0   Sorte: 0",
+            fonte,
+            VERDE,
+            720,
+            560
         )
 
         # =====================================
@@ -184,7 +211,7 @@ def escolher_classe(tela):
             fonte,
             verde_brilho,
             350,
-            620
+            680
         )
 
         # =====================================
@@ -207,7 +234,9 @@ def escolher_classe(tela):
                         120,
                         10,
                         18,
-                        2
+                        2,
+                        resistencia_inicial=2,
+                        sorte_inicial=0
                     )
 
                 elif evento.key == pygame.K_2:
@@ -217,7 +246,9 @@ def escolher_classe(tela):
                         100,
                         12,
                         20,
-                        2
+                        2,
+                        resistencia_inicial=1,
+                        sorte_inicial=1
                     )
 
                 elif evento.key == pygame.K_3:
@@ -227,8 +258,230 @@ def escolher_classe(tela):
                         80,
                         15,
                         25,
-                        3
+                        3,
+                        resistencia_inicial=0,
+                        sorte_inicial=0
                     )
+
+                elif evento.key == pygame.K_9:
+
+                    resultado = tela_cheat_code(tela)
+
+                    if resultado is not None:
+
+                        return resultado
+
+        # =====================================
+        # CRT
+        # =====================================
+
+        efeito_crt(tela)
+
+        pygame.display.update()
+
+
+# =========================================
+# TELA CHEAT CODE
+# =========================================
+
+def tela_cheat_code(tela):
+    """Tela secreta para inserir código cheat."""
+
+    clock = pygame.time.Clock()
+
+    codigo = ""
+
+    brilho_cursor = 0
+    aumentando_cursor = True
+
+    mensagem = ""
+    cor_mensagem = VERDE
+
+    while True:
+
+        clock.tick(FPS)
+
+        tela.fill(PRETO)
+
+        # =====================================
+        # EFEITO CURSOR PISCANTE
+        # =====================================
+
+        if aumentando_cursor:
+
+            brilho_cursor += 5
+
+            if brilho_cursor >= 255:
+
+                aumentando_cursor = False
+
+        else:
+
+            brilho_cursor -= 5
+
+            if brilho_cursor <= 50:
+
+                aumentando_cursor = True
+
+        # =====================================
+        # VISUAL TERMINAL
+        # =====================================
+
+        desenhar_texto(
+            tela,
+            "=============================",
+            fonte,
+            VERDE,
+            250,
+            200
+        )
+
+        desenhar_texto(
+            tela,
+            "   ACESSO RESTRITO   ",
+            fonte_titulo,
+            VERDE,
+            290,
+            240
+        )
+
+        desenhar_texto(
+            tela,
+            "=============================",
+            fonte,
+            VERDE,
+            250,
+            280
+        )
+
+        desenhar_texto(
+            tela,
+            "> Digite o codigo secreto:",
+            fonte,
+            VERDE,
+            250,
+            340
+        )
+
+        # =====================================
+        # INPUT DO CÓDIGO
+        # =====================================
+
+        cursor_char = "_" if brilho_cursor > 127 else " "
+
+        desenhar_texto(
+            tela,
+            f"> {codigo}{cursor_char}",
+            fonte,
+            (
+                min(255, brilho_cursor),
+                min(255, brilho_cursor),
+                min(255, brilho_cursor)
+            ),
+            250,
+            390
+        )
+
+        # =====================================
+        # MENSAGEM DE FEEDBACK
+        # =====================================
+
+        if mensagem:
+
+            desenhar_texto(
+                tela,
+                mensagem,
+                fonte,
+                cor_mensagem,
+                250,
+                460
+            )
+
+        # =====================================
+        # INSTRUÇÃO
+        # =====================================
+
+        desenhar_texto(
+            tela,
+            "[ESC] Voltar",
+            fonte,
+            CINZA,
+            250,
+            600
+        )
+
+        # =====================================
+        # EVENTOS
+        # =====================================
+
+        for evento in pygame.event.get():
+
+            if evento.type == pygame.QUIT:
+
+                pygame.quit()
+                sys.exit()
+
+            if evento.type == pygame.KEYDOWN:
+
+                if evento.key == pygame.K_ESCAPE:
+
+                    return None
+
+                elif evento.key == pygame.K_BACKSPACE:
+
+                    codigo = codigo[:-1]
+                    mensagem = ""
+
+                elif evento.key == pygame.K_RETURN:
+
+                    if codigo == "999":
+
+                        mensagem = (
+                            "*** CODIGO ACEITO! ***"
+                        )
+
+                        cor_mensagem = (255, 215, 0)
+
+                        # Redesenha com mensagem
+                        tela.fill(PRETO)
+
+                        desenhar_texto(
+                            tela,
+                            "*** CODIGO ACEITO! ***",
+                            fonte_titulo,
+                            (255, 215, 0),
+                            280,
+                            350
+                        )
+
+                        efeito_crt(tela)
+                        pygame.display.update()
+                        pygame.time.delay(1500)
+
+                        return Personagem(
+                            "Tadafilado",
+                            999,
+                            999,
+                            999,
+                            99,
+                            resistencia_inicial=999,
+                            sorte_inicial=999
+                        )
+
+                    else:
+
+                        mensagem = "CODIGO INVALIDO!"
+                        cor_mensagem = VERMELHO
+                        codigo = ""
+
+                else:
+
+                    # Aceita apenas números
+                    if evento.unicode.isdigit():
+
+                        if len(codigo) < 10:
+
+                            codigo += evento.unicode
 
         # =====================================
         # CRT
@@ -281,14 +534,31 @@ def jogo():
         )
 
         # =====================================
-        # BATALHA 1
+        # BATALHAS
         # =====================================
 
-        if not tela_batalha(
-            tela,
-            jogador,
-            lobo
-        ):
+        inimigos = [lobo, cavaleiro, malzor]
+
+        derrotado = False
+
+        for inimigo in inimigos:
+
+            resultado = tela_batalha(
+                tela,
+                jogador,
+                inimigo
+            )
+
+            if not resultado:
+
+                derrotado = True
+                break
+
+        # =====================================
+        # RESULTADO FINAL
+        # =====================================
+
+        if derrotado:
 
             reiniciar = tela_game_over(tela)
 
@@ -296,41 +566,11 @@ def jogo():
 
                 continue
 
-        # =====================================
-        # BATALHA 2
-        # =====================================
+        else:
 
-        if not tela_batalha(
-            tela,
-            jogador,
-            cavaleiro
-        ):
+            tela_vitoria(tela)
 
-            reiniciar = tela_game_over(tela)
-
-            if reiniciar:
-
-                continue
-
-        # =====================================
-        # CHEFE FINAL
-        # =====================================
-
-        if not tela_batalha(
-            tela,
-            jogador,
-            malzor
-        ):
-
-            reiniciar = tela_game_over(tela)
-
-            if reiniciar:
-
-                continue
-
-        tela_vitoria(tela)
-
-        break
+            break
 
 
 if __name__ == "__main__":

@@ -108,3 +108,35 @@ CHANCE_ESQUIVA = 10
 CURA_MIN = 15
 
 CURA_MAX = 25
+
+
+# =========================================
+# XP E LEVEL UP
+# =========================================
+
+XP_BASE_NIVEL = 40
+
+BONUS_DANO_POR_PONTO = 2
+
+BONUS_HP_POR_PONTO = 10
+
+BONUS_RESISTENCIA_POR_PONTO = 1
+
+BONUS_SORTE_VIDA = 5
+
+BONUS_SORTE_RESISTENCIA = 3
+
+BONUS_SORTE_NENHUM = 8
+
+XP_INIMIGOS = {
+    "Lobo Sombrio": 30,
+    "Cavaleiro Corrompido": 50,
+    "Malzor": 80
+}
+
+
+# =========================================
+# CORES EXTRAS
+# =========================================
+
+DOURADO = (255, 215, 0)
