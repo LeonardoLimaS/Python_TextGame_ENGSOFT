@@ -3,15 +3,15 @@ from personagens import Personagem
 lobo = Personagem(
     "Lobo Sombrio",
     50,
-    8,
-    14
+    12,
+    6
 )
 
 cavaleiro = Personagem(
     "Cavaleiro Corrompido",
     80,
-    10,
-    18
+    8,
+    10
 )
 
 malzor = Personagem(

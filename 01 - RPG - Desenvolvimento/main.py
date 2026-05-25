@@ -527,8 +527,8 @@ def jogo():
                 nome = "Cavaleiro Corrompido"
 
             # Escalamento por round: HP (+10% por round), Dano (+7% por round)
-            mult_hp = 1.0 + (round_num - 1) * 0.10
-            mult_dano = 1.0 + (round_num - 1) * 0.7
+            mult_hp = 1.0 + (round_num - 1) * 0.8
+            mult_dano = 1.0 + (round_num - 1) * 0.1
 
             hp_atual = int(hp_base * mult_hp)
             dano_min_atual = int(dano_min_base * mult_dano)
